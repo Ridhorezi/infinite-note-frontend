@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "infinite-note-frontend",
-    "slug": "infinite-note-frontend",
+    "name": "InfiniteNote",
+    "slug": "InfiniteNote",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
