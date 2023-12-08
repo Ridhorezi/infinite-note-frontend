@@ -2,9 +2,12 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-export const BASE_URL = "Url Services";
+// https://duck-above-overly.ngrok-free.app/
+export const BASE_URL = "https://square-optimum-muskrat.ngrok-free.app/";
+// export const BASE_URL = "https://infinite-note.vercel.app/";
 
 const TIME_OUT = 30000;
+
 export const INFINITE_TOKEN_NAME = "infinite_user_token";
 
 const axiosInstance = axios.create({

@@ -1,22 +1,22 @@
-import axiosInstance, { BASE_URL, fetcher } from "@/services/config"
-import { ICategory, ITaskRequest } from "@/types"
-import { Box, Text } from "@/utils/theme"
-import { format, isToday } from "date-fns"
-import React, { useState } from "react"
-import { FlatList, Pressable, TextInput } from "react-native"
-import { Calendar } from "react-native-calendars"
-import useSWR, { useSWRConfig } from "swr"
-import useSWRMutation from "swr/mutation"
-import Loader from "../shared/loader"
+import axiosInstance, { BASE_URL, fetcher } from "@/services/config";
+import { ICategory, ITaskRequest } from "@/types";
+import { Box, Text } from "@/utils/theme";
+import { format, isToday } from "date-fns";
+import React, { useState } from "react";
+import { FlatList, Pressable, TextInput } from "react-native";
+import { Calendar } from "react-native-calendars";
+import useSWR, { useSWRConfig } from "swr";
+import useSWRMutation from "swr/mutation";
+import Loader from "../shared/loader";
 
 type TaskActionsProps = {
-  categoryId: string
-}
+  categoryId: string;
+};
 
-export const today = new Date()
+export const today = new Date();
 
-export const todaysISODate = new Date()
-todaysISODate.setHours(0, 0, 0, 0)
+export const todaysISODate = new Date();
+todaysISODate.setHours(0, 0, 0, 0);
 
 const createTaskRequest = async (
   url: string,
@@ -25,12 +25,12 @@ const createTaskRequest = async (
   try {
     await axiosInstance.post(url, {
       ...arg,
-    })
+    });
   } catch (error) {
-    console.log("error in createTaskRequest", error)
-    throw error
+    console.log("error in createTaskRequest", error);
+    throw error;
   }
-}
+};
 
 const TaskActions = ({ categoryId }: TaskActionsProps) => {
   const [newTask, setNewTask] = useState<ITaskRequest>({
@@ -38,29 +38,31 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
     date: todaysISODate.toISOString(),
     isCompleted: false,
     name: "",
-  })
+  });
 
-  const { data, trigger } = useSWRMutation("tasks/create", createTaskRequest)
+  const { data, trigger } = useSWRMutation("tasks/create", createTaskRequest);
 
-  const [isSelectingCategory, setIsSelectingCategory] = useState<boolean>(false)
-  const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false)
+  const [isSelectingCategory, setIsSelectingCategory] = useState<boolean>(
+    false
+  );
+  const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false);
 
   const { data: categories, isLoading } = useSWR<ICategory[]>(
     "categories",
     fetcher
-  )
+  );
 
-  const { mutate } = useSWRConfig()
+  const { mutate } = useSWRConfig();
 
   if (isLoading || !categories) {
-    return <Loader />
+    return <Loader />;
   }
 
   const selectedCategory = categories?.find(
     (_category) => _category._id === newTask.categoryId
-  )
+  );
 
-  console.log(`selectedCategory`, JSON.stringify(selectedCategory, null, 2))
+  console.log(`selectedCategory`, JSON.stringify(selectedCategory, null, 2));
 
   const onCreateTask = async () => {
     try {
@@ -70,20 +72,20 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
          */
         await trigger({
           ...newTask,
-        })
+        });
         setNewTask({
           categoryId: newTask.categoryId,
           isCompleted: false,
           date: todaysISODate.toISOString(),
           name: "",
-        })
-        await mutate("tasks/")
+        });
+        await mutate("tasks/");
       }
     } catch (error) {
-      console.log("error in onCreateTask", error)
-      throw error
+      console.log("error in onCreateTask", error);
+      throw error;
     }
-  }
+  };
 
   return (
     <Box>
@@ -111,15 +113,15 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
               return {
                 ...prev,
                 name: text,
-              }
-            })
+              };
+            });
           }}
           onSubmitEditing={onCreateTask}
         />
         <Box flexDirection="row" alignItems="center">
           <Pressable
             onPress={() => {
-              setIsSelectingDate((prev) => !prev)
+              setIsSelectingDate((prev) => !prev);
             }}
           >
             <Box
@@ -139,7 +141,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           <Box width={12} />
           <Pressable
             onPress={() => {
-              setIsSelectingCategory((prev) => !prev)
+              setIsSelectingCategory((prev) => !prev);
             }}
           >
             <Box
@@ -182,9 +184,9 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                       return {
                         ...prev,
                         categoryId: item._id,
-                      }
-                    })
-                    setIsSelectingCategory(false)
+                      };
+                    });
+                    setIsSelectingCategory(false);
                   }}
                 >
                   <Box
@@ -212,7 +214,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
                     </Box>
                   </Box>
                 </Pressable>
-              )
+              );
             }}
           />
         </Box>
@@ -222,20 +224,20 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
           <Calendar
             minDate={format(today, "Y-MM-dd")}
             onDayPress={(day) => {
-              setIsSelectingDate(false)
-              const selectedDate = new Date(day.dateString).toISOString()
+              setIsSelectingDate(false);
+              const selectedDate = new Date(day.dateString).toISOString();
               setNewTask((prev) => {
                 return {
                   ...prev,
                   date: selectedDate,
-                }
-              })
+                };
+              });
             }}
           />
         </Box>
       )}
     </Box>
-  )
-}
+  );
+};
 
-export default TaskActions
+export default TaskActions;
