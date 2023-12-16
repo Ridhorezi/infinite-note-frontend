@@ -1,11 +1,11 @@
-import Navigation from "@/navigation"
-import theme from "@/utils/theme"
-import { ThemeProvider } from "@shopify/restyle"
-import { StatusBar } from "expo-status-bar"
-import React from "react"
-import { AppState } from "react-native"
-import { SafeAreaProvider } from "react-native-safe-area-context"
-import { SWRConfig } from "swr"
+import Navigation from "@/navigation";
+import theme from "@/utils/theme";
+import { ThemeProvider } from "@shopify/restyle";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { AppState } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SWRConfig } from "swr";
 
 export default function App() {
   return (
@@ -15,10 +15,10 @@ export default function App() {
           value={{
             provider: () => new Map(),
             isVisible: () => {
-              return true
+              return true;
             },
             initFocus(callback) {
-              let appState = AppState.currentState
+              let appState = AppState.currentState;
 
               const onAppStateChange = (nextAppState: any) => {
                 /* If it's resuming from background or inactive mode to active one */
@@ -26,20 +26,20 @@ export default function App() {
                   appState.match(/inactive|background/) &&
                   nextAppState === "active"
                 ) {
-                  callback()
+                  callback();
                 }
-                appState = nextAppState
-              }
+                appState = nextAppState;
+              };
 
               // Subscribe to the app state change events
               const subscription = AppState.addEventListener(
                 "change",
                 onAppStateChange
-              )
+              );
 
               return () => {
-                subscription.remove()
-              }
+                subscription.remove();
+              };
             },
           }}
         >
@@ -48,5 +48,5 @@ export default function App() {
         <StatusBar translucent />
       </SafeAreaProvider>
     </ThemeProvider>
-  )
+  );
 }

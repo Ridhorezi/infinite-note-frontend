@@ -48,7 +48,7 @@ const TaskActions = ({ categoryId }: TaskActionsProps) => {
   const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false);
 
   const { data: categories, isLoading } = useSWR<ICategory[]>(
-    "categories",
+    "categories/",
     fetcher
   );
 

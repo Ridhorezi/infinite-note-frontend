@@ -1,97 +1,102 @@
-import NavigateBack from "@/components/shared/navigate-back"
-import SafeAreaWrapper from "@/components/shared/safe-area-wrapper"
-import { Box, Text, Theme } from "@/utils/theme"
-import React, { useState } from "react"
-import { FlatList, Pressable, TextInput } from "react-native"
-import { MaterialCommunityIcons } from "@expo/vector-icons"
-import { useTheme } from "@shopify/restyle"
-import { isToday, format } from "date-fns"
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
-import { HomeStackParamList } from "@/navigation/types"
-import Loader from "@/components/shared/loader"
-import axiosInstance, { fetcher } from "@/services/config"
-import { ICategory, ITask } from "@/types"
-import useSWR, { useSWRConfig } from "swr"
-import useSWRMutation from "swr/mutation"
-import { Calendar } from "react-native-calendars"
-import { today } from "@/components/tasks/task-actions"
+import NavigateBack from "@/components/shared/navigate-back";
+import SafeAreaWrapper from "@/components/shared/safe-area-wrapper";
+import { Box, Text, Theme } from "@/utils/theme";
+import React, { useState } from "react";
+import { FlatList, Pressable, TextInput } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTheme } from "@shopify/restyle";
+import { isToday, format } from "date-fns";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { HomeStackParamList } from "@/navigation/types";
+import Loader from "@/components/shared/loader";
+import axiosInstance, { fetcher } from "@/services/config";
+import { ICategory, ITask } from "@/types";
+import useSWR, { useSWRConfig } from "swr";
+import useSWRMutation from "swr/mutation";
+import { Calendar } from "react-native-calendars";
+import { today } from "@/components/tasks/task-actions";
 
-type EditTaskRouteType = RouteProp<HomeStackParamList, "EditTask">
+type EditTaskRouteType = RouteProp<HomeStackParamList, "EditTask">;
 
 const updateTaskRequest = async (url: string, { arg }: { arg: ITask }) => {
   try {
     await axiosInstance.put(url + "/" + arg._id, {
       ...arg,
-    })
+    });
   } catch (error) {}
-}
+};
 
 const deleteTaskRequest = async (
   url: string,
   { arg }: { arg: { id: string } }
 ) => {
   try {
-    await axiosInstance.delete(url + "/" + arg.id)
+    await axiosInstance.delete(url + "/" + arg.id);
   } catch (error) {}
-}
+};
 
 const EditTaskScreen = () => {
-  const theme = useTheme<Theme>()
+  const theme = useTheme<Theme>();
 
-  const route = useRoute<EditTaskRouteType>()
+  const route = useRoute<EditTaskRouteType>();
 
-  const navigation = useNavigation()
+  const navigation = useNavigation();
 
-  const { trigger } = useSWRMutation("tasks/edit", updateTaskRequest)
-  const { trigger: triggerDelete } = useSWRMutation("tasks/", deleteTaskRequest)
+  const { trigger } = useSWRMutation("tasks/edit", updateTaskRequest);
+  const { trigger: triggerDelete } = useSWRMutation(
+    "tasks/",
+    deleteTaskRequest
+  );
 
-  const { task } = route.params
+  const { task } = route.params;
 
-  const [updatedTask, setUpdatedTask] = useState(task)
+  const [updatedTask, setUpdatedTask] = useState(task);
 
-  const { mutate } = useSWRConfig()
+  const { mutate } = useSWRConfig();
 
-  const [isSelectingCategory, setIsSelectingCategory] = useState<boolean>(false)
-  const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false)
+  const [isSelectingCategory, setIsSelectingCategory] = useState<boolean>(
+    false
+  );
+  const [isSelectingDate, setIsSelectingDate] = useState<boolean>(false);
 
   const { data: categories, isLoading } = useSWR<ICategory[]>(
-    "categories",
+    "categories/",
     fetcher
-  )
+  );
 
   const deleteTask = async () => {
     try {
       await triggerDelete({
         id: task._id,
-      })
-      await mutate("tasks/")
-      navigation.goBack()
+      });
+      await mutate("tasks/");
+      navigation.goBack();
     } catch (error) {
-      console.log("error in deleteTask", error)
-      throw error
+      console.log("error in deleteTask", error);
+      throw error;
     }
-  }
+  };
 
   const updateTask = async () => {
     try {
       if (updateTask.name.length.toString().trim().length > 0) {
-        await trigger({ ...updatedTask })
-        await mutate("tasks/")
-        navigation.goBack()
+        await trigger({ ...updatedTask });
+        await mutate("tasks/");
+        navigation.goBack();
       }
     } catch (error) {
-      console.log("error in updateTask", error)
-      throw error
+      console.log("error in updateTask", error);
+      throw error;
     }
-  }
+  };
 
   if (isLoading || !categories) {
-    return <Loader />
+    return <Loader />;
   }
 
   const selectedCategory = categories?.find(
     (_category) => _category._id === updatedTask.categoryId
-  )
+  );
 
   return (
     <SafeAreaWrapper>
@@ -137,15 +142,15 @@ const EditTaskScreen = () => {
                 return {
                   ...prev,
                   name: text,
-                }
-              })
+                };
+              });
             }}
             onSubmitEditing={updateTask}
           />
           <Box flexDirection="row" alignItems="center">
             <Pressable
               onPress={() => {
-                setIsSelectingDate((prev) => !prev)
+                setIsSelectingDate((prev) => !prev);
               }}
             >
               <Box
@@ -165,7 +170,7 @@ const EditTaskScreen = () => {
             <Box width={12} />
             <Pressable
               onPress={() => {
-                setIsSelectingCategory((prev) => !prev)
+                setIsSelectingCategory((prev) => !prev);
               }}
             >
               <Box
@@ -209,9 +214,9 @@ const EditTaskScreen = () => {
                         return {
                           ...prev,
                           categoryId: item._id,
-                        }
-                      })
-                      setIsSelectingCategory(false)
+                        };
+                      });
+                      setIsSelectingCategory(false);
                     }}
                   >
                     <Box
@@ -245,7 +250,7 @@ const EditTaskScreen = () => {
                       </Box>
                     </Box>
                   </Pressable>
-                )
+                );
               }}
             />
           </Box>
@@ -255,21 +260,21 @@ const EditTaskScreen = () => {
             <Calendar
               minDate={format(today, "Y-MM-dd")}
               onDayPress={(day) => {
-                setIsSelectingDate(false)
-                const selectedDate = new Date(day.dateString).toISOString()
+                setIsSelectingDate(false);
+                const selectedDate = new Date(day.dateString).toISOString();
                 setUpdatedTask((prev) => {
                   return {
                     ...prev,
                     date: selectedDate,
-                  }
-                })
+                  };
+                });
               }}
             />
           </Box>
         )}
       </Box>
     </SafeAreaWrapper>
-  )
-}
+  );
+};
 
-export default EditTaskScreen
+export default EditTaskScreen;

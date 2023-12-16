@@ -3,10 +3,9 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 // https://duck-above-overly.ngrok-free.app/
-export const BASE_URL = "https://square-optimum-muskrat.ngrok-free.app/";
-// export const BASE_URL = "https://infinite-note.vercel.app/";
+export const BASE_URL = "https://infinite-note.vercel.app/";
 
-const TIME_OUT = 30000;
+const TIME_OUT = 3000;
 
 export const INFINITE_TOKEN_NAME = "infinite_user_token";
 
@@ -37,6 +36,8 @@ axiosInstance.interceptors.request.use(async (req) => {
   try {
     const access_token = await SecureStore.getItemAsync(INFINITE_TOKEN_NAME);
     req.headers.Authorization = access_token;
+    req.headers["Content-Type"] = "application/json";
+
     return req;
   } catch (error) {
     return req;
